@@ -1,3 +1,5 @@
+import { filmsSet } from "./data/test-data.js";
+
 webix.ready(function() {
   webix
     .ui({
@@ -30,7 +32,12 @@ webix.ready(function() {
               ]
             },
             { view: "resizer" },
-            { view: "datatable" },
+            {
+              view: "datatable",
+              data: filmsSet,
+              autoConfig: true,
+              autoheight: true
+            },
             {
               view: "form",
               elements: [
