@@ -1,7 +1,8 @@
 import { filmsSet } from "./data/test-data.js";
 
 const header = {
-  css: "header",
+  view: "toolbar",
+  css: "webix_dark",
   paddingX: 20,
   height: 50,
   cols: [
@@ -9,16 +10,19 @@ const header = {
       view: "label",
       label: "My App",
       gravity: 0.2,
-      minWidth: 200
+      minWidth: 100,
+      maxWidth: 150
     },
     {},
     {
       view: "button",
       type: "icon",
-      icon: "mdi mdi-account",
+      icon: "wxi-user",
       label: "Profile",
+      css: "webix_transparent",
       gravity: 0.2,
-      minWidth: 200
+      minWidth: 100,
+      maxWidth: 150
     }
   ]
 };
@@ -30,25 +34,21 @@ const form = {
   elements: [
     { template: "EDIT FILMS", type: "section" },
     {
-      margin: 20,
-      cols: [{ view: "label", label: "Title", width: 70 }, { view: "text" }]
+      cols: [{ view: "text", label: "Title" }]
     },
     {
-      margin: 20,
-      cols: [{ view: "label", label: "Year", width: 70 }, { view: "text" }]
+      cols: [{ view: "text", label: "Year" }]
     },
     {
-      margin: 20,
-      cols: [{ view: "label", label: "Rating", width: 70 }, { view: "text" }]
+      cols: [{ view: "text", label: "Rating" }]
     },
     {
-      margin: 20,
-      cols: [{ view: "label", label: "Votes", width: 70 }, { view: "text" }]
+      cols: [{ view: "text", label: "Votes" }]
     },
     {
       margin: 20,
       cols: [
-        { view: "button", label: "Add new", css: "form-button--add" },
+        { view: "button", label: "Add new", css: "webix_primary" },
         { view: "button", label: "Clear" }
       ]
     },
@@ -60,12 +60,14 @@ const dataTable = {
   view: "datatable",
   minWidth: 540,
   data: filmsSet,
+  scrollX: false,
   autoConfig: true
 };
 
 const sideMenu = {
   css: "side-bar",
-  minWidth: 100,
+  minWidth: 150,
+  width: 200,
   rows: [
     {
       view: "list",
@@ -106,10 +108,8 @@ const footer = {
 };
 
 webix.ready(function() {
-  webix
-    .ui({
-      id: "layout",
-      rows: [header, content, footer]
-    })
-    .show();
+  webix.ui({
+    id: "layout",
+    rows: [header, content, footer]
+  });
 });

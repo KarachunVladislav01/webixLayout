@@ -4,20 +4,6 @@ html {
 body {
   font-size: 1.6rem;
 }
-.header,
-.header .webix_button {
-  background-color: #657584;
-}
-
-.header .webix_el_box,
-.header .webix_button,
-.header .webix_button .webix_icon_btn {
-  color: #ffffff;
-}
-
-.header .webix_button {
-  text-align: end;
-}
 
 .side-bar,
 .side-bar .webix_template {
@@ -36,10 +22,6 @@ body {
 .form-grid {
   display: grid;
   grid-template: 1fr/1fr 5fr;
-}
-.form-button--add .webix_button {
-  background-color: #1ca1c1;
-  color: #ffffff;
 }
 
 .footer {
