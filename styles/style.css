@@ -1,0 +1,19 @@
+html {
+  font-size: 10px;
+}
+body {
+  font-size: 1.6rem;
+}
+.header,
+.header .webix_button {
+  background-color: #657584;
+}
+
+.header .webix_el_box,
+.header .webix_button {
+  color: #ffffff;
+}
+
+.header .webix_button {
+  text-align: end;
+}
