@@ -1,0 +1,29 @@
+html {
+  font-size: 10px;
+}
+body {
+  font-size: 1.6rem;
+}
+
+.side-bar,
+.side-bar .webix_template {
+  background-color: #eeeeee;
+}
+.side-bar .webix_view {
+  border: 0;
+}
+
+.side-bar .connection-status .webix_template span {
+  margin-left: 2rem;
+  color: #409e53;
+  height: 2rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template: 1fr/1fr 5fr;
+}
+
+.footer {
+  text-align: center;
+}
