@@ -25,20 +25,34 @@ const header = {
 
 const form = {
   view: "form",
+  minWidth: 150,
+  maxWidth: 250,
   elements: [
-    { cols: [{ view: "label", label: "Title" }, { view: "text" }] },
-    { cols: [{ view: "label", label: "Year" }, { view: "text" }] },
+    { template: "EDIT FILMS", type: "section" },
     {
-      cols: [{ view: "label", label: "Rating" }, { view: "text" }]
+      margin: 20,
+      cols: [{ view: "label", label: "Title", width: 70 }, { view: "text" }]
     },
-    { cols: [{ view: "label", label: "Votes" }, { view: "text" }] },
-    {},
     {
+      margin: 20,
+      cols: [{ view: "label", label: "Year", width: 70 }, { view: "text" }]
+    },
+    {
+      margin: 20,
+      cols: [{ view: "label", label: "Rating", width: 70 }, { view: "text" }]
+    },
+    {
+      margin: 20,
+      cols: [{ view: "label", label: "Votes", width: 70 }, { view: "text" }]
+    },
+    {
+      margin: 20,
       cols: [
-        { view: "button", label: "Add new" },
+        { view: "button", label: "Add new", css: "form-button--add" },
         { view: "button", label: "Clear" }
       ]
-    }
+    },
+    {}
   ]
 };
 
@@ -46,16 +60,22 @@ const dataTable = {
   view: "datatable",
   minWidth: 540,
   data: filmsSet,
-  autoConfig: true,
-  autoheight: true
+  autoConfig: true
 };
 
 const sideMenu = {
+  css: "side-bar",
+  minWidth: 100,
   rows: [
     {
       view: "list",
       template: "#title#",
       select: true,
+      gravity: 0.7,
+      minHeight: 400,
+      scroll: false,
+      borderless: true,
+      css: "side-bar",
       data: [
         { id: 1, title: "Dashboard" },
         { id: 2, title: "Users" },
@@ -64,7 +84,12 @@ const sideMenu = {
       ]
     },
     {},
-    { view: "label", label: "Connected" }
+    {
+      maxHeight: 40,
+      borderless: false,
+      css: "connection-status",
+      template: "<span class=' webix_icon wxi-check'>Connected</span>"
+    }
   ]
 };
 
@@ -73,9 +98,11 @@ const content = {
 };
 
 const footer = {
+  css: "footer",
   template:
-    "The software is provided by https://docs.webix.com. Allrights reseved (c)",
-  height: 20
+    "<span>The software is provided by <a href='https://docs.webix.com'>webix.com</a>. Allrights reseved (c)</span>",
+  gravity: 0.1,
+  maxHeight: 40
 };
 
 webix.ready(function() {
