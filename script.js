@@ -22,10 +22,25 @@ const header = {
       css: "webix_transparent",
       gravity: 0.2,
       minWidth: 100,
-      maxWidth: 150
+      maxWidth: 150,
+      popup: "profile-popup"
     }
   ]
 };
+
+webix.ui({
+  view: "popup",
+  id: "profile-popup",
+  body: {
+    view: "list",
+    data: [
+      { id: "1", label: "Settings" },
+      { id: "2", label: "Log out" }
+    ],
+    template: "#label#",
+    autoheight: true
+  }
+});
 
 const form = {
   view: "form",
@@ -34,16 +49,20 @@ const form = {
   elements: [
     { template: "EDIT FILMS", type: "section" },
     {
-      cols: [{ view: "text", label: "Title" }]
+      view: "text",
+      label: "Title"
     },
     {
-      cols: [{ view: "text", label: "Year" }]
+      view: "text",
+      label: "Year"
     },
     {
-      cols: [{ view: "text", label: "Rating" }]
+      view: "text",
+      label: "Rating"
     },
     {
-      cols: [{ view: "text", label: "Votes" }]
+      view: "text",
+      label: "Votes"
     },
     {
       margin: 20,
