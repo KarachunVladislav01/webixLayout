@@ -117,7 +117,6 @@ const form = {
     title: webix.rules.isNotEmpty,
     year: value => {
       const now = new Date();
-      console.log(value);
       return value > 1970 && value < now.getFullYear() && isNumber(value);
     },
     votes: value => {
