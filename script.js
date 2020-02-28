@@ -27,19 +27,20 @@ const header = {
     }
   ]
 };
-
-webix.ui({
-  view: "popup",
-  id: "profile-popup",
-  body: {
-    view: "list",
-    data: [
-      { id: "1", label: "Settings" },
-      { id: "2", label: "Log out" }
-    ],
-    template: "#label#",
-    autoheight: true
-  }
+webix.ready(function() {
+  webix.ui({
+    view: "popup",
+    id: "profile-popup",
+    body: {
+      view: "list",
+      data: [
+        { id: "1", label: "Settings" },
+        { id: "2", label: "Log out" }
+      ],
+      template: "#label#",
+      autoheight: true
+    }
+  });
 });
 
 const form = {
