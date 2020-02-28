@@ -60,22 +60,19 @@ const form = {
       view: "text",
       label: "Year",
       name: "year",
-      invalidMessage: "1970 - the current year",
-      validate: webix.rules.isNumber
+      invalidMessage: "1970 - the current year"
     },
     {
       view: "text",
       label: "Rating",
       name: "rating",
-      invalidMessage: "Number cannot be zero",
-      validate: webix.rules.isNumber
+      invalidMessage: "Number cannot be zero"
     },
     {
       view: "text",
       label: "Votes",
       name: "votes",
-      invalidMessage: "must be > 100000",
-      validate: webix.rules.isNumber
+      invalidMessage: "must be > 100000"
     },
     {
       margin: 20,
@@ -120,16 +117,19 @@ const form = {
     title: webix.rules.isNotEmpty,
     year: value => {
       const now = new Date();
-      return value > 1970 && value < now.getFullYear();
+      console.log(value);
+      return value > 1970 && value < now.getFullYear() && isNumber(value);
     },
     votes: value => {
-      return value != "" && value < 100000;
+      return value < 100000 && isNumber(value);
     },
     rating: value => {
-      return value != "" && value != 0;
+      return value != 0 && isNumber(value);
     }
   }
 };
+
+const isNumber = value => !Number.isNaN(Number.parseInt(value));
 
 const confirmOfClearForm = () => {
   webix
