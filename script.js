@@ -59,19 +59,22 @@ const form = {
       view: "text",
       label: "Year",
       name: "year",
-      invalidMessage: "1970 - the current year"
+      invalidMessage: "1970 - the current year",
+      validate: webix.rules.isNumber
     },
     {
       view: "text",
       label: "Rating",
       name: "rating",
-      invalidMessage: "Cannot be zero"
+      invalidMessage: "Number cannot be zero",
+      validate: webix.rules.isNumber
     },
     {
       view: "text",
       label: "Votes",
       name: "votes",
-      invalidMessage: "must be > 100000"
+      invalidMessage: "must be > 100000",
+      validate: webix.rules.isNumber
     },
     {
       margin: 20,
