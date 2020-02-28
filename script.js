@@ -92,8 +92,7 @@ const form = {
                 expire: 2000
               });
               form.clear();
-            }
-            {
+            } else {
               webix.message({
                 text: "Invalid data",
                 type: "error",
