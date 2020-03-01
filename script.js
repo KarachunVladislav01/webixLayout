@@ -1,3 +1,5 @@
+import { usersInformation } from "./data/users.js";
+
 const header = {
   view: "toolbar",
   css: "webix_dark",
@@ -168,7 +170,7 @@ const dataTable = {
   minWidth: 580,
   fillspace: true,
   select: true,
-  hover:	"row--hover",
+  hover: "row--hover",
   url: "./data/data.js",
   columns: [
     { id: "rank", header: "", sort: "int", width: 40, css: "column--id" },
@@ -240,14 +242,84 @@ const sideMenu = {
       maxHeight: 40,
       borderless: false,
       css: "connection-status",
-      template: "<span class=' webix_icon wxi-check'>Connected</span>"
+      template: "<span class='webix_icon wxi-check'>Connected</span>"
     }
   ]
 };
 
+const filterUsersList = () => {
+  const value = $$("listFilter")
+    .getValue()
+    .toLowerCase();
+  $$("usersList").filter(function(obj) {
+    return (
+      obj.name.toLowerCase().indexOf(value) !== -1 ||
+      obj.country.toLowerCase().indexOf(value) !== -1
+    );
+  });
+};
+
+const usersList = {
+  rows: [
+    {
+      view: "toolbar",
+      elements: [
+        {
+          view: "text",
+          id: "listFilter",
+          on: { onTimedKeyPress: filterUsersList }
+        },
+        {
+          view: "button",
+          label: "Sort asc",
+          gravity: 0.2,
+          css: "webix_primary",
+          click: () => {
+            $$("usersList").sort("name", "asc");
+          }
+        },
+        {
+          view: "button",
+          label: "Sort Desc",
+          gravity: 0.2,
+          css: "webix_primary",
+          click: () => {
+            $$("usersList").sort("name", "desc");
+          }
+        }
+      ]
+    },
+    {
+      view: "list",
+      id: "usersList",
+      template:
+        "<div class= 'users-list--flex'><span>#name# from #country#</span>{common.deleteIcon}</div>",
+      type: {
+        // userInfo: obj => {
+        //   return "<span>" + obj.name + " from " + obj.country + "</span>";
+        // },
+        deleteIcon: "<span class='remove-btn webix_icon wxi-close'></span>"
+      },
+      onClick: {
+        "remove-btn": function(e, id) {
+          this.remove(id);
+          return false;
+        }
+      },
+      data: webix.copy(usersInformation)
+    }
+  ]
+};
+
+const users = {
+  rows: [usersList]
+};
+
+const dashboard = { cols: [dataTable, form] };
+
 const multiView = {
   view: "multiview",
-  cells: [{ cols: [dataTable, form] }]
+  cells: [users]
 };
 
 const content = {

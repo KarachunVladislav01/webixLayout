@@ -34,5 +34,11 @@ body {
 }
 
 .row--hover {
-  background-color: rgba(152, 247, 222, 0.150);
+  background-color: rgba(152, 247, 222, 0.15);
+}
+
+.users-list--flex {
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
 }
