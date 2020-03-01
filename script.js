@@ -1,5 +1,3 @@
-import { filmsSet } from "./data/test-data.js";
-
 const header = {
   view: "toolbar",
   css: "webix_dark",
@@ -43,10 +41,39 @@ webix.ready(function() {
   });
 });
 
+const saveFilm = () => {
+  const form = $$("addFilmForm");
+  const dataTable = $$("filmsDataTable");
+  const isValid = form.validate();
+  if (isValid) {
+    const formData = form.getValues();
+    if (formData.id) {
+      dataTable.updateItem(formData.id, formData);
+      dataTable.clearSelection();
+    } else {
+      dataTable.add(formData);
+    }
+    webix.message({
+      text: "Adding was successful",
+      type: "success",
+      expire: 2000
+    });
+
+    form.clear();
+  } else {
+    webix.message({
+      text: "Invalid data",
+      type: "error",
+      expire: 2000
+    });
+  }
+};
+
 const form = {
   view: "form",
   id: "addFilmForm",
-  minWidth: 150,
+  gravity: 1,
+  minWidth: 180,
   maxWidth: 250,
   elements: [
     { template: "EDIT FILMS", type: "section" },
@@ -81,26 +108,7 @@ const form = {
           view: "button",
           label: "Add new",
           css: "webix_primary",
-          click: () => {
-            const form = $$("addFilmForm");
-            const isValid = form.validate();
-            if (isValid) {
-              const formData = form.getValues();
-              $$("filmsDataTable").add(formData);
-              webix.message({
-                text: "Adding was successful",
-                type: "success",
-                expire: 2000
-              });
-              form.clear();
-            } else {
-              webix.message({
-                text: "Invalid data",
-                type: "error",
-                expire: 2000
-              });
-            }
-          }
+          click: saveFilm
         },
         {
           view: "button",
@@ -120,10 +128,10 @@ const form = {
       return value > 1970 && value < now.getFullYear() && isNumber(value);
     },
     votes: value => {
-      return value < 100000 && isNumber(value);
+      return Number.parseFloat(value) < 100000 && isNumber(value);
     },
     rating: value => {
-      return value != 0 && isNumber(value);
+      return Number.parseFloat(value) != 0 && isNumber(value);
     }
   }
 };
@@ -143,13 +151,67 @@ const confirmOfClearForm = () => {
     });
 };
 
+const valuesToForm = id => {
+  const values = $$("filmsDataTable").getItem(id);
+  $$("addFilmForm").setValues(values);
+};
+
+webix.DataStore.prototype.sorting.as.sortByFloat = (firstNum, secondNum) => {
+  const first = Number.parseFloat(firstNum);
+  const second = Number.parseFloat(secondNum);
+  return first > second ? 1 : first < second ? -1 : 0;
+};
+
 const dataTable = {
   view: "datatable",
   id: "filmsDataTable",
-  minWidth: 540,
-  data: filmsSet,
+  minWidth: 580,
+  fillspace: true,
+  select: true,
+  hover:	"row--hover",
+  url: "./data/data.js",
+  columns: [
+    { id: "rank", header: "", sort: "int", width: 40, css: "column--id" },
+    {
+      id: "title",
+      header: [{ text: "Film Title" }, { content: "textFilter" }],
+      sort: "string",
+      adjust: true,
+      fillspace: true
+    },
+    {
+      id: "year",
+      header: [{ text: "Released" }, { content: "selectFilter" }],
+      sort: "date",
+      format: webix.i18n.dateFormatStr,
+      adjust: true
+    },
+    {
+      id: "votes",
+      header: [{ text: "Votes" }, { content: "textFilter" }],
+      sort: "sortByFloat",
+      adjust: true
+    },
+    {
+      id: "rating",
+      header: [{ text: "Rating" }, { content: "textFilter" }],
+      sort: "string",
+      adjust: true
+    },
+    {
+      header: "",
+      template: "<span class='remove-btn webix_icon wxi-trash'></span>"
+    }
+  ],
+
   scrollX: false,
-  autoConfig: true
+  on: { onAfterSelect: valuesToForm },
+  onClick: {
+    "remove-btn": function(e, id) {
+      this.remove(id);
+      return false;
+    }
+  }
 };
 
 const sideMenu = {
@@ -183,8 +245,13 @@ const sideMenu = {
   ]
 };
 
+const multiView = {
+  view: "multiview",
+  cells: [{ cols: [dataTable, form] }]
+};
+
 const content = {
-  cols: [sideMenu, { view: "resizer" }, dataTable, form]
+  cols: [sideMenu, { view: "resizer" }, multiView]
 };
 
 const footer = {
@@ -197,7 +264,6 @@ const footer = {
 
 webix.ready(function() {
   webix.ui({
-    id: "layout",
     rows: [header, content, footer]
   });
 });
