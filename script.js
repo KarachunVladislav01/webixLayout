@@ -156,14 +156,6 @@ const valuesToForm = id => {
   $$("addFilmForm").setValues(values);
 };
 
-webix.DataStore.prototype.sorting.as.sortByFloat = (first, second) => {
-  if (first > second) {
-    return 1;
-  } else {
-    return first < second ? -1 : 0;
-  }
-};
-
 const dataTable = {
   view: "datatable",
   id: "filmsDataTable",
@@ -197,13 +189,13 @@ const dataTable = {
     {
       id: "votes",
       header: [{ text: "Votes" }, { content: "textFilter" }],
-      sort: "sortByFloat",
+      sort: "int",
       adjust: true
     },
     {
       id: "rating",
       header: [{ text: "Rating" }, { content: "textFilter" }],
-      sort: "string",
+      sort: "int",
       adjust: true
     },
     {
