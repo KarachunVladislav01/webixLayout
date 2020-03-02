@@ -1,6 +1,3 @@
-import { usersInformation } from "./data/users.js";
-import { products } from "./data/products.js";
-
 const header = {
   view: "toolbar",
   css: "webix_dark",
@@ -159,9 +156,7 @@ const valuesToForm = id => {
   $$("addFilmForm").setValues(values);
 };
 
-webix.DataStore.prototype.sorting.as.sortByFloat = (firstNum, secondNum) => {
-  const first = Number.parseFloat(firstNum);
-  const second = Number.parseFloat(secondNum);
+webix.DataStore.prototype.sorting.as.sortByFloat = (first, second) => {
   if (first > second) {
     return 1;
   } else {
@@ -177,6 +172,12 @@ const dataTable = {
   select: true,
   hover: "row--hover",
   url: "./data/data.js",
+  scheme: {
+    $init: function(obj) {
+      obj.votes = parseFloat(obj.votes.replace(",", "."));
+      obj.rating = parseFloat(obj.rating.replace(",", "."));
+    }
+  },
   columns: [
     { id: "rank", header: "", sort: "int", width: 40, css: "column--id" },
     {
@@ -219,14 +220,6 @@ const dataTable = {
       return false;
     }
   }
-};
-const changeListColors = () => {
-  const usersList = [
-    ...document.getElementsByClassName("users-list--flex")
-  ].slice(0, 5);
-  usersList.forEach(
-    element => (element.parentElement.style.backgroundColor = randomColor())
-  );
 };
 
 const sideMenu = {
@@ -317,6 +310,7 @@ const usersList = {
     },
     {
       view: "list",
+      css: "user-list--color",
       id: "usersList",
       template:
         "<div class= 'users-list--flex'>{common.userInfo()}{common.deleteIcon}</div>",
@@ -332,8 +326,7 @@ const usersList = {
           return false;
         }
       },
-      on: { onAfterRender: changeListColors },
-      data: webix.copy(usersInformation)
+      url: "./data/users.js"
     }
   ]
 };
@@ -346,7 +339,7 @@ const usesDiagram = {
     title: "Age",
     template: "#age#"
   },
-  data: usersInformation
+  url: "./data/users.js"
 };
 
 const users = {
@@ -357,7 +350,7 @@ const users = {
 const productsTable = {
   view: "treetable",
   id: "products",
-  select: true,
+  select: "cell",
 
   columns: [
     { id: "id", header: "", adjust: true },
@@ -373,7 +366,7 @@ const productsTable = {
   ready: function() {
     this.openAll();
   },
-  data: webix.copy(products)
+  url: "./data/products.js"
 };
 
 const dashboard = { id: "dashboard", cols: [dataTable, form] };

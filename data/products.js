@@ -1,4 +1,4 @@
-const products = [
+[
 	{
 		"id": "1",
 		"title": "Cinema",
@@ -53,5 +53,3 @@ const products = [
 		]
 	}
 ]
-
-export { products }

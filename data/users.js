@@ -1,4 +1,4 @@
-const usersInformation = [
+[
 	{
 		"id": 1,
 		"name": "Alan Smith",
@@ -72,5 +72,3 @@ const usersInformation = [
 		"country": "Germany"
 	}
 ]
-
-export { usersInformation }
