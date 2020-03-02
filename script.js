@@ -1,4 +1,5 @@
 import { usersInformation } from "./data/users.js";
+import { products } from "./data/products.js";
 
 const header = {
   view: "toolbar",
@@ -215,6 +216,14 @@ const dataTable = {
     }
   }
 };
+const changeListColors = () => {
+  const usersList = [
+    ...document.getElementsByClassName("users-list--flex")
+  ].slice(0, 5);
+  usersList.forEach(
+    element => (element.parentElement.style.backgroundColor = randomColor())
+  );
+};
 
 const sideMenu = {
   css: "side-bar",
@@ -230,11 +239,19 @@ const sideMenu = {
       scroll: false,
       borderless: true,
       css: "side-bar",
+      on: {
+        onAfterSelect: function(id) {
+          if (id == "users") {
+            changeListColors();
+          }
+          $$(id).show();
+        }
+      },
       data: [
-        { id: 1, title: "Dashboard" },
-        { id: 2, title: "Users" },
-        { id: 3, title: "Products" },
-        { id: 4, title: "Locations" }
+        { id: "dashboard", title: "Dashboard" },
+        { id: "users", title: "Users" },
+        { id: "products", title: "Products" },
+        { id: "locations", title: "Locations" }
       ]
     },
     {},
@@ -257,6 +274,14 @@ const filterUsersList = () => {
       obj.country.toLowerCase().indexOf(value) !== -1
     );
   });
+};
+
+const randomColor = () => {
+  let colorArray = [];
+  for (let i = 0; i < 3; i++) {
+    colorArray.push(Math.floor(Math.random() * (255 - 0) + 0));
+  }
+  return `rgb(${colorArray.join(",")}, 0.2)`;
 };
 
 const usersList = {
@@ -295,8 +320,8 @@ const usersList = {
       template:
         "<div class= 'users-list--flex'><span>#name# from #country#</span>{common.deleteIcon}</div>",
       type: {
-        // userInfo: obj => {
-        //   return "<span>" + obj.name + " from " + obj.country + "</span>";
+        // userInfo: function(obj) {
+        //   `<span>${obj.name} from ${obj.country}</span>`;
         // },
         deleteIcon: "<span class='remove-btn webix_icon wxi-close'></span>"
       },
@@ -306,20 +331,57 @@ const usersList = {
           return false;
         }
       },
+      onRotate: function() {
+        debugger;
+      },
       data: webix.copy(usersInformation)
     }
   ]
 };
 
-const users = {
-  rows: [usersList]
+const usesDiagram = {
+  view: "chart",
+  type: "bar",
+  value: "#age#",
+  xAxis: {
+    title: "Age",
+    template: "#age#"
+  },
+  data: usersInformation
 };
 
-const dashboard = { cols: [dataTable, form] };
+const users = {
+  id: "users",
+  rows: [usersList, usesDiagram]
+};
+
+const productsTable = {
+  view: "treetable",
+  id: "products",
+  select: true,
+
+  columns: [
+    { id: "id", header: "", adjust: true },
+    {
+      id: "title",
+      header: "Title",
+      template: "{common.treetable()} #title#",
+      adjust: true,
+      fillspace: true
+    },
+    { id: "price", header: "Price", adjust: true }
+  ],
+  ready: function() {
+    this.openAll();
+  },
+  data: webix.copy(products)
+};
+
+const dashboard = { id: "dashboard", cols: [dataTable, form] };
 
 const multiView = {
   view: "multiview",
-  cells: [users]
+  cells: [users, dashboard, productsTable]
 };
 
 const content = {
