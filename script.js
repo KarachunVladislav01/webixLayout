@@ -1,5 +1,3 @@
-import { filmsSet } from "./data/test-data.js";
-
 const header = {
   view: "toolbar",
   css: "webix_dark",
@@ -43,10 +41,39 @@ webix.ready(function() {
   });
 });
 
+const saveFilm = () => {
+  const form = $$("addFilmForm");
+  const dataTable = $$("filmsDataTable");
+  const isValid = form.validate();
+  if (isValid) {
+    const formData = form.getValues();
+    if (formData.id) {
+      dataTable.updateItem(formData.id, formData);
+      dataTable.clearSelection();
+    } else {
+      dataTable.add(formData);
+    }
+    webix.message({
+      text: "Adding was successful",
+      type: "success",
+      expire: 2000
+    });
+
+    form.clear();
+  } else {
+    webix.message({
+      text: "Invalid data",
+      type: "error",
+      expire: 2000
+    });
+  }
+};
+
 const form = {
   view: "form",
   id: "addFilmForm",
-  minWidth: 150,
+  gravity: 1,
+  minWidth: 180,
   maxWidth: 250,
   elements: [
     { template: "EDIT FILMS", type: "section" },
@@ -81,26 +108,7 @@ const form = {
           view: "button",
           label: "Add new",
           css: "webix_primary",
-          click: () => {
-            const form = $$("addFilmForm");
-            const isValid = form.validate();
-            if (isValid) {
-              const formData = form.getValues();
-              $$("filmsDataTable").add(formData);
-              webix.message({
-                text: "Adding was successful",
-                type: "success",
-                expire: 2000
-              });
-              form.clear();
-            } else {
-              webix.message({
-                text: "Invalid data",
-                type: "error",
-                expire: 2000
-              });
-            }
-          }
+          click: saveFilm
         },
         {
           view: "button",
@@ -120,10 +128,10 @@ const form = {
       return value > 1970 && value < now.getFullYear() && isNumber(value);
     },
     votes: value => {
-      return value < 100000 && isNumber(value);
+      return Number.parseFloat(value) < 100000 && isNumber(value);
     },
     rating: value => {
-      return value != 0 && isNumber(value);
+      return Number.parseFloat(value) != 0 && isNumber(value);
     }
   }
 };
@@ -143,13 +151,67 @@ const confirmOfClearForm = () => {
     });
 };
 
+const valuesToForm = id => {
+  const values = $$("filmsDataTable").getItem(id);
+  $$("addFilmForm").setValues(values);
+};
+
 const dataTable = {
   view: "datatable",
   id: "filmsDataTable",
-  minWidth: 540,
-  data: filmsSet,
+  minWidth: 580,
+  fillspace: true,
+  select: true,
+  hover: "row--hover",
+  url: "./data/data.js",
+  scheme: {
+    $init: function(obj) {
+      obj.votes = parseFloat(obj.votes.replace(",", "."));
+      obj.rating = parseFloat(obj.rating.replace(",", "."));
+    }
+  },
+  columns: [
+    { id: "rank", header: "", sort: "int", width: 40, css: "column--id" },
+    {
+      id: "title",
+      header: [{ text: "Film Title" }, { content: "textFilter" }],
+      sort: "string",
+      adjust: true,
+      fillspace: true
+    },
+    {
+      id: "year",
+      header: [{ text: "Released" }, { content: "selectFilter" }],
+      sort: "date",
+      format: webix.i18n.dateFormatStr,
+      adjust: true
+    },
+    {
+      id: "votes",
+      header: [{ text: "Votes" }, { content: "textFilter" }],
+      sort: "int",
+      adjust: true
+    },
+    {
+      id: "rating",
+      header: [{ text: "Rating" }, { content: "textFilter" }],
+      sort: "int",
+      adjust: true
+    },
+    {
+      header: "",
+      template: "<span class='remove-btn webix_icon wxi-trash'></span>"
+    }
+  ],
+
   scrollX: false,
-  autoConfig: true
+  on: { onAfterSelect: valuesToForm },
+  onClick: {
+    "remove-btn": function(e, id) {
+      this.remove(id);
+      return false;
+    }
+  }
 };
 
 const sideMenu = {
@@ -166,11 +228,16 @@ const sideMenu = {
       scroll: false,
       borderless: true,
       css: "side-bar",
+      on: {
+        onAfterSelect: function(id) {
+          $$(id).show();
+        }
+      },
       data: [
-        { id: 1, title: "Dashboard" },
-        { id: 2, title: "Users" },
-        { id: 3, title: "Products" },
-        { id: 4, title: "Locations" }
+        { id: "dashboard", title: "Dashboard" },
+        { id: "users", title: "Users" },
+        { id: "products", title: "Products" },
+        { id: "locations", title: "Locations" }
       ]
     },
     {},
@@ -178,13 +245,131 @@ const sideMenu = {
       maxHeight: 40,
       borderless: false,
       css: "connection-status",
-      template: "<span class=' webix_icon wxi-check'>Connected</span>"
+      template: "<span class='webix_icon wxi-check'>Connected</span>"
     }
   ]
 };
 
+const filterUsersList = () => {
+  const value = $$("listFilter")
+    .getValue()
+    .toLowerCase();
+  $$("usersList").filter(function(obj) {
+    return (
+      obj.name.toLowerCase().indexOf(value) !== -1 ||
+      obj.country.toLowerCase().indexOf(value) !== -1
+    );
+  });
+};
+
+const randomColor = () => {
+  let colorArray = [];
+  for (let i = 0; i < 3; i++) {
+    colorArray.push(Math.floor(Math.random() * (255 - 0) + 0));
+  }
+  return `rgb(${colorArray.join(",")}, 0.2)`;
+};
+
+const usersList = {
+  rows: [
+    {
+      view: "toolbar",
+      elements: [
+        {
+          view: "text",
+          id: "listFilter",
+          on: { onTimedKeyPress: filterUsersList }
+        },
+        {
+          view: "button",
+          label: "Sort asc",
+          gravity: 0.2,
+          css: "webix_primary",
+          click: () => {
+            $$("usersList").sort("name", "asc");
+          }
+        },
+        {
+          view: "button",
+          label: "Sort Desc",
+          gravity: 0.2,
+          css: "webix_primary",
+          click: () => {
+            $$("usersList").sort("name", "desc");
+          }
+        }
+      ]
+    },
+    {
+      view: "list",
+      css: "user-list--color",
+      id: "usersList",
+      template:
+        "<div class= 'users-list--flex'>{common.userInfo()}{common.deleteIcon}</div>",
+      type: {
+        userInfo: function(obj) {
+          return `<span>${obj.name} from ${obj.country}</span>`;
+        },
+        deleteIcon: "<span class='remove-btn webix_icon wxi-close'></span>"
+      },
+      onClick: {
+        "remove-btn": function(e, id) {
+          this.remove(id);
+          return false;
+        }
+      },
+      url: "./data/users.js"
+    }
+  ]
+};
+
+const usesDiagram = {
+  view: "chart",
+  type: "bar",
+  value: "#age#",
+  xAxis: {
+    title: "Age",
+    template: "#age#"
+  },
+  url: "./data/users.js"
+};
+
+const users = {
+  id: "users",
+  rows: [usersList, usesDiagram]
+};
+
+const productsTable = {
+  view: "treetable",
+  id: "products",
+  select: "cell",
+
+  columns: [
+    { id: "id", header: "", adjust: true },
+    {
+      id: "title",
+      header: "Title",
+      template: "{common.treetable()} #title#",
+      adjust: true,
+      fillspace: true
+    },
+    { id: "price", header: "Price", adjust: true }
+  ],
+  ready: function() {
+    this.openAll();
+  },
+  url: "./data/products.js"
+};
+
+const dashboard = { id: "dashboard", cols: [dataTable, form] };
+
+const multiView = {
+  view: "multiview",
+  cells: [dashboard, users, productsTable]
+};
+
 const content = {
-  cols: [sideMenu, { view: "resizer" }, dataTable, form]
+  cols: [sideMenu, { view: "resizer" }, multiView]
 };
 
 const footer = {
@@ -197,7 +382,6 @@ const footer = {
 
 webix.ready(function() {
   webix.ui({
-    id: "layout",
     rows: [header, content, footer]
   });
 });

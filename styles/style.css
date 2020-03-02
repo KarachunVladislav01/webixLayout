@@ -27,3 +27,22 @@ body {
 .footer {
   text-align: center;
 }
+
+.column--id {
+  background-color: #f4f5f9;
+  border-right: 1px solid #ccd7e6;
+}
+
+.row--hover {
+  background-color: rgba(152, 247, 222, 0.15);
+}
+
+.users-list--flex {
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+}
+
+.user-list--color .webix_list_item:nth-child(-n + 5) {
+  background-color: #dfefe4;
+}
