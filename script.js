@@ -162,7 +162,11 @@ const valuesToForm = id => {
 webix.DataStore.prototype.sorting.as.sortByFloat = (firstNum, secondNum) => {
   const first = Number.parseFloat(firstNum);
   const second = Number.parseFloat(secondNum);
-  return first > second ? 1 : first < second ? -1 : 0;
+  if (first > second) {
+    return 1;
+  } else {
+    return first < second ? -1 : 0;
+  }
 };
 
 const dataTable = {
@@ -217,7 +221,6 @@ const dataTable = {
   }
 };
 const changeListColors = () => {
-  debugger;
   const usersList = [
     ...document.getElementsByClassName("users-list--flex")
   ].slice(0, 5);
@@ -316,11 +319,11 @@ const usersList = {
       view: "list",
       id: "usersList",
       template:
-        "<div class= 'users-list--flex'><span>#name# from #country#</span>{common.deleteIcon}</div>",
+        "<div class= 'users-list--flex'>{common.userInfo()}{common.deleteIcon}</div>",
       type: {
-        // userInfo: function(obj) {
-        //   `<span>${obj.name} from ${obj.country}</span>`;
-        // },
+        userInfo: function(obj) {
+          return `<span>${obj.name} from ${obj.country}</span>`;
+        },
         deleteIcon: "<span class='remove-btn webix_icon wxi-close'></span>"
       },
       onClick: {
