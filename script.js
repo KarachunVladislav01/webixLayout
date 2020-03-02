@@ -217,6 +217,7 @@ const dataTable = {
   }
 };
 const changeListColors = () => {
+  debugger;
   const usersList = [
     ...document.getElementsByClassName("users-list--flex")
   ].slice(0, 5);
@@ -241,9 +242,6 @@ const sideMenu = {
       css: "side-bar",
       on: {
         onAfterSelect: function(id) {
-          if (id == "users") {
-            changeListColors();
-          }
           $$(id).show();
         }
       },
@@ -331,9 +329,7 @@ const usersList = {
           return false;
         }
       },
-      onRotate: function() {
-        debugger;
-      },
+      on: { onAfterRender: changeListColors },
       data: webix.copy(usersInformation)
     }
   ]
@@ -381,7 +377,7 @@ const dashboard = { id: "dashboard", cols: [dataTable, form] };
 
 const multiView = {
   view: "multiview",
-  cells: [users, dashboard, productsTable]
+  cells: [dashboard, users, productsTable]
 };
 
 const content = {
