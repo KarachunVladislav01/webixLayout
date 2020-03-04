@@ -1,3 +1,11 @@
+const filmCategoriesCollection = new webix.DataCollection({
+  url: "./data/categories.js"
+});
+
+const usersCollection = new webix.DataCollection({
+  url: "./data/users.js"
+});
+
 const header = {
   view: "toolbar",
   css: "webix_dark",
@@ -175,7 +183,7 @@ const dataTable = {
       id: "categoryId",
       header: [{ text: "Category" }, { content: "selectFilter" }],
       sort: "string",
-      collection: "./data/categories.js",
+      collection: filmCategoriesCollection,
       adjust: true
     },
     {
@@ -269,7 +277,7 @@ const sideMenu = {
         { id: "dashboard", title: "Dashboard" },
         { id: "users", title: "Users" },
         { id: "products", title: "Products" },
-        { id: "locations", title: "Locations" }
+        { id: "admin", title: "Admin" }
       ]
     },
     {},
@@ -385,8 +393,7 @@ const usersList = {
       },
       editable: true,
       editor: "text",
-      editValue: "name",
-      url: "./data/users.js"
+      editValue: "name"
     }
   ]
 };
@@ -474,7 +481,8 @@ webix.ready(function() {
 });
 
 webix.ready(function() {
-  $$("usersChart").sync($$("usersList"), function() {
+  $$("usersList").sync(usersCollection);
+  $$("usersChart").sync(usersCollection, function() {
     this.group({
       by: "country",
       map: {
