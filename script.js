@@ -1,3 +1,17 @@
+const filmCategoriesCollection = new webix.DataCollection({
+  url: "./data/categories.js"
+});
+
+const usersCollection = new webix.DataCollection({
+  url: "./data/users.js",
+  scheme: {
+    $init: function(obj) {
+      const age = obj.age;
+      if (age < 26) obj.$css = "user-list--color";
+    }
+  }
+});
+
 const header = {
   view: "toolbar",
   css: "webix_dark",
@@ -57,6 +71,11 @@ const form = {
       label: "Votes",
       name: "votes",
       invalidMessage: "must be > 100000"
+    },
+    {
+      view: "richselect",
+      label: "Category",
+      options: filmCategoriesCollection
     },
     {
       margin: 20,
@@ -160,7 +179,7 @@ const dataTable = {
       id: "categoryId",
       header: [{ text: "Category" }, { content: "selectFilter" }],
       sort: "string",
-      collection: "./data/categories.js",
+      collection: filmCategoriesCollection,
       adjust: true
     },
     {
@@ -243,6 +262,7 @@ const sideMenu = {
   rows: [
     {
       view: "list",
+      id: "menuList",
       template: "#title#",
       select: true,
       gravity: 0.7,
@@ -259,8 +279,11 @@ const sideMenu = {
         { id: "dashboard", title: "Dashboard" },
         { id: "users", title: "Users" },
         { id: "products", title: "Products" },
-        { id: "locations", title: "Locations" }
-      ]
+        { id: "admin", title: "Admin" }
+      ],
+      ready: function() {
+        this.select($$("multiview").getActiveId());
+      }
     },
     {},
     {
@@ -335,7 +358,7 @@ const usersList = {
           css: "webix_primary",
           click: () => {
             const name = $$("listFilter").getValue();
-            $$("usersList").add(
+            usersCollection.add(
               {
                 name: name,
                 age: getRandomInt(1, 100),
@@ -350,12 +373,6 @@ const usersList = {
     {
       view: "editlist",
       id: "usersList",
-      scheme: {
-        $init: function(obj) {
-          const age = obj.age;
-          if (age < 26) obj.$css = "user-list--color";
-        }
-      },
       template:
         "<div class= 'users-list--flex'>{common.userInfo()}{common.deleteIcon}</div>",
       type: {
@@ -366,7 +383,7 @@ const usersList = {
       },
       onClick: {
         "remove-btn": function(e, id) {
-          this.remove(id);
+          usersCollection.remove(id);
           return false;
         }
       },
@@ -375,8 +392,7 @@ const usersList = {
       },
       editable: true,
       editor: "text",
-      editValue: "name",
-      url: "./data/users.js"
+      editValue: "name"
     }
   ]
 };
@@ -435,14 +451,104 @@ const productsTable = {
   url: "./data/products.js"
 };
 
+const adminForm = {
+  view: "form",
+  id: "addCategoryForm",
+  gravity: 1,
+  minWidth: 180,
+  maxWidth: 250,
+  elements: [
+    { template: "EDIT CATEGORY", type: "section" },
+    {
+      view: "text",
+      label: "Category",
+      name: "value",
+      invalidMessage: "Must be filled"
+    },
+    {
+      margin: 20,
+      cols: [
+        {
+          view: "button",
+          label: "Add new",
+          css: "webix_primary",
+          click: function() {
+            const form = $$("addCategoryForm");
+            if (form.validate()) {
+              filmCategoriesCollection.add(form.getValues(), 0);
+              form.clear();
+            } else {
+              webix.message("Invalid values");
+            }
+          }
+        },
+        {
+          view: "button",
+          label: "Clear",
+          click: () => {
+            confirmOfClearForm();
+          }
+        }
+      ]
+    },
+    {}
+  ],
+  rules: {
+    value: webix.rules.isNotEmpty
+  }
+};
+
+const adminDataTable = {
+  view: "datatable",
+  id: "categoryDataTable",
+  minWidth: 300,
+  fillspace: true,
+  select: true,
+  editable: true,
+  hover: "row--hover",
+  columns: [
+    { id: "id", header: "", sort: "int", width: 40, css: "column--id" },
+    {
+      id: "value",
+      header: [{ text: "Film category" }],
+      editor: "text",
+      sort: "string",
+      adjust: true,
+      fillspace: true
+    },
+    {
+      header: "",
+      template: "<span class='remove-btn webix_icon wxi-trash'></span>"
+    }
+  ],
+  scrollX: false,
+  onClick: {
+    "remove-btn": function(e, id) {
+      filmCategoriesCollection.remove(id);
+      return false;
+    }
+  },
+  on: {
+    onAfterAdd: function(id) {
+      this.showItem(id);
+    }
+  }
+};
+
 const dashboard = {
   id: "dashboard",
   cols: [{ rows: [filterOptions, dataTable] }, form]
 };
 
+const admin = {
+  id: "admin",
+  cols: [adminDataTable, adminForm]
+};
+
 const multiView = {
   view: "multiview",
-  cells: [dashboard, users, productsTable]
+  id: "multiview",
+  cells: [dashboard, users, productsTable, admin]
 };
 
 const content = {
@@ -476,7 +582,8 @@ webix.ready(function() {
     rows: [header, content, footer]
   });
 
-  $$("usersChart").sync($$("usersList"), function() {
+  $$("usersList").sync(usersCollection);
+  $$("usersChart").sync(usersCollection, function() {
     this.group({
       by: "country",
       map: {
@@ -484,4 +591,5 @@ webix.ready(function() {
       }
     });
   });
+  $$("categoryDataTable").sync(filmCategoriesCollection);
 });
