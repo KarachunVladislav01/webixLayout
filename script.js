@@ -25,21 +25,6 @@ const header = {
     }
   ]
 };
-webix.ready(function() {
-  webix.ui({
-    view: "popup",
-    id: "profile-popup",
-    body: {
-      view: "list",
-      data: [
-        { id: "1", label: "Settings" },
-        { id: "2", label: "Log out" }
-      ],
-      template: "#label#",
-      autoheight: true
-    }
-  });
-});
 
 const form = {
   view: "form",
@@ -207,6 +192,11 @@ const dataTable = {
     "remove-btn": function(e, id) {
       this.remove(id);
       return false;
+    }
+  },
+  on: {
+    onAfterAdd: function(id) {
+      this.showItem(id);
     }
   },
   ready: function() {
@@ -469,11 +459,23 @@ const footer = {
 
 webix.ready(function() {
   webix.ui({
+    view: "popup",
+    id: "profile-popup",
+    body: {
+      view: "list",
+      data: [
+        { id: "1", label: "Settings" },
+        { id: "2", label: "Log out" }
+      ],
+      template: "#label#",
+      autoheight: true
+    }
+  });
+
+  webix.ui({
     rows: [header, content, footer]
   });
-});
 
-webix.ready(function() {
   $$("usersChart").sync($$("usersList"), function() {
     this.group({
       by: "country",
