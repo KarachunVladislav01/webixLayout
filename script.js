@@ -262,6 +262,7 @@ const sideMenu = {
   rows: [
     {
       view: "list",
+      id: "menuList",
       template: "#title#",
       select: true,
       gravity: 0.7,
@@ -279,7 +280,10 @@ const sideMenu = {
         { id: "users", title: "Users" },
         { id: "products", title: "Products" },
         { id: "admin", title: "Admin" }
-      ]
+      ],
+      ready: function() {
+        this.select($$("multiview").getActiveId());
+      }
     },
     {},
     {
@@ -544,6 +548,7 @@ const admin = {
 
 const multiView = {
   view: "multiview",
+  id: "multiview",
   cells: [dashboard, users, productsTable, admin]
 };
 
