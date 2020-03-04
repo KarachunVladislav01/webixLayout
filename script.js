@@ -345,11 +345,14 @@ const usersList = {
           css: "webix_primary",
           click: () => {
             const name = $$("listFilter").getValue();
-            $$("usersList").add({
-              name: name,
-              age: getRandomInt(1, 100),
-              country: "USA"
-            });
+            $$("usersList").add(
+              {
+                name: name,
+                age: getRandomInt(1, 100),
+                country: "USA"
+              },
+              0
+            );
           }
         }
       ]
@@ -390,6 +393,7 @@ const usersList = {
 
 const usesDiagram = {
   view: "chart",
+  id: "usersChart",
   type: "bar",
   value: "#age#",
   xAxis: {
@@ -398,19 +402,7 @@ const usesDiagram = {
       if (obj.$group) return obj.country;
       else return obj.age;
     }
-  },
-  ready: function() {
-    $$(this).sync($$("usersList"), function() {
-      this.group({
-        by: "country",
-        map: {
-          age: ["id", "count"]
-        }
-      });
-    });
-  },
-
-  url: "./data/users.js"
+  }
 };
 
 const users = {
@@ -478,5 +470,16 @@ const footer = {
 webix.ready(function() {
   webix.ui({
     rows: [header, content, footer]
+  });
+});
+
+webix.ready(function() {
+  $$("usersChart").sync($$("usersList"), function() {
+    this.group({
+      by: "country",
+      map: {
+        age: ["id", "count"]
+      }
+    });
   });
 });
