@@ -73,6 +73,11 @@ const form = {
       invalidMessage: "must be > 100000"
     },
     {
+      view: "richselect",
+      label: "Category",
+      options: filmCategoriesCollection
+    },
+    {
       margin: 20,
       cols: [
         {
@@ -464,7 +469,14 @@ const adminForm = {
           label: "Add new",
           css: "webix_primary",
           click: function() {
-            this.getFormView().save();
+            const form = $$("addCategoryForm");
+            if (form.validate()) {
+              filmCategoriesCollection.add(form.getValues(), 0);
+              form.clear();
+            } else {
+              webix.message("Invalid values");
+              return false;
+            }
           }
         },
         {
@@ -515,9 +527,6 @@ const adminDataTable = {
     onAfterAdd: function(id) {
       this.showItem(id);
     }
-  },
-  ready: function() {
-    debugger;
   }
 };
 
@@ -533,7 +542,7 @@ const admin = {
 
 const multiView = {
   view: "multiview",
-  cells: [admin, dashboard, users, productsTable]
+  cells: [dashboard, users, productsTable, admin]
 };
 
 const content = {
