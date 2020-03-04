@@ -216,10 +216,22 @@ const dataTable = {
       {
         columnId: "year",
         compare: function(value, filter, item) {
-          if (filter == "old") return value < 2000;
-          else if (filter == "new") return value >= 2000;
-          else if (filter == "modern") return value >= 1910 && value <= 1960;
-          else if (filter == "all") return value;
+          switch (filter) {
+            case "old":
+              return value < 2000;
+              break;
+            case "new":
+              return value >= 2000;
+              break;
+            case "modern":
+              return value >= 1910 && value <= 1960;
+              break;
+            case "all":
+              return value;
+              break;
+            default:
+              webix.message({ type: "error", text: "No filter" });
+          }
         }
       },
       {
@@ -333,7 +345,6 @@ const usersList = {
           css: "webix_primary",
           click: () => {
             const name = $$("listFilter").getValue();
-            const usersList = $$("usersList");
             $$("usersList").add({
               name: name,
               age: getRandomInt(1, 100),
