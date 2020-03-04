@@ -479,7 +479,6 @@ const adminForm = {
               form.clear();
             } else {
               webix.message("Invalid values");
-              return false;
             }
           }
         },
