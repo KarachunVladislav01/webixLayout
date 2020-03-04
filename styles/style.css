@@ -43,6 +43,6 @@ body {
   align-content: center;
 }
 
-.user-list--color .webix_list_item:nth-child(-n + 5) {
-  background-color: #dfefe4;
+.user-list--color {
+  background-color: #feffd4;
 }
