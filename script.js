@@ -501,12 +501,14 @@ const adminDataTable = {
   minWidth: 300,
   fillspace: true,
   select: true,
+  editable: true,
   hover: "row--hover",
   columns: [
     { id: "id", header: "", sort: "int", width: 40, css: "column--id" },
     {
       id: "value",
       header: [{ text: "Film category" }],
+      editor: "text",
       sort: "string",
       adjust: true,
       fillspace: true
@@ -585,6 +587,5 @@ webix.ready(function() {
       }
     });
   });
-  $$("addCategoryForm").bind($$("categoryDataTable"));
   $$("categoryDataTable").sync(filmCategoriesCollection);
 });
