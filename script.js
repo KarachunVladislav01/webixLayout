@@ -334,23 +334,48 @@ const usersList = {
           on: { onTimedKeyPress: filterUsersList }
         },
         {
-          view: "button",
-          label: "Sort asc",
+          view: "stateButton",
           gravity: 0.2,
-          css: "webix_primary",
-          click: () => {
-            $$("usersList").sort("name", "asc");
+          state: 0,
+          states: { 0: "Off", 1: "SortAsc", 2: "SortDesc" },
+          on: {
+            onStateChange: function(state) {
+              debugger;
+              const usersList = $$("usersList");
+              switch (state) {
+                case "Off":
+                  usersList.sort("id", "asc", "int");
+                  break;
+                case "SortAsc":
+                  usersList.sort("name", "asc");
+                  break;
+                case "SortDesc":
+                  usersList.sort("name", "desc");
+                  break;
+                default:
+                  webix.message({ type: "error", text: "No sort" });
+              }
+            }
           }
         },
-        {
-          view: "button",
-          label: "Sort Desc",
-          gravity: 0.2,
-          css: "webix_primary",
-          click: () => {
-            $$("usersList").sort("name", "desc");
-          }
-        },
+        // {
+        //   view: "button",
+        //   label: "Sort asc",
+        //   gravity: 0.2,
+        //   css: "webix_primary",
+        //   click: () => {
+        //     $$("usersList").sort("name", "asc");
+        //   }
+        // },
+        // {
+        //   view: "button",
+        //   label: "Sort Desc",
+        //   gravity: 0.2,
+        //   css: "webix_primary",
+        //   click: () => {
+        //     $$("usersList").sort("name", "desc");
+        //   }
+        // },
         {
           view: "button",
           label: "Add new",
@@ -548,7 +573,7 @@ const admin = {
 const multiView = {
   view: "multiview",
   id: "multiview",
-  cells: [dashboard, users, productsTable, admin]
+  cells: [users, dashboard, productsTable, admin]
 };
 
 const content = {

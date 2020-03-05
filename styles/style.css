@@ -46,3 +46,18 @@ body {
 .user-list--color {
   background-color: #feffd4;
 }
+
+.webix_el_stateButton.state--off button {
+  background-color: #b6fcb6;
+  color: black;
+}
+
+.webix_el_stateButton.state--sortasc button {
+  background-color: #f7b2b2;
+  color: black;
+}
+
+.webix_el_stateButton.state--sortdesc button {
+  background-color: #fcfca8;
+  color: black;
+}
