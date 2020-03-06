@@ -279,7 +279,8 @@ const sideMenu = {
         { id: "dashboard", title: "Dashboard" },
         { id: "users", title: "Users" },
         { id: "products", title: "Products" },
-        { id: "admin", title: "Admin" }
+        { id: "admin", title: "Admin" },
+        { id: "genForm", title: "Form" }
       ],
       ready: function() {
         this.select($$("multiview").getActiveId());
@@ -334,21 +335,27 @@ const usersList = {
           on: { onTimedKeyPress: filterUsersList }
         },
         {
-          view: "button",
-          label: "Sort asc",
+          view: "stateButton",
           gravity: 0.2,
-          css: "webix_primary",
-          click: () => {
-            $$("usersList").sort("name", "asc");
-          }
-        },
-        {
-          view: "button",
-          label: "Sort Desc",
-          gravity: 0.2,
-          css: "webix_primary",
-          click: () => {
-            $$("usersList").sort("name", "desc");
+          state: 0,
+          states: { 0: "Off", 1: "SortAsc", 2: "SortDesc" },
+          on: {
+            onStateChange: function(state) {
+              const usersList = $$("usersList");
+              switch (state) {
+                case "Off":
+                  usersList.sort("id", "asc", "int");
+                  break;
+                case "SortAsc":
+                  usersList.sort("name", "asc");
+                  break;
+                case "SortDesc":
+                  usersList.sort("name", "desc");
+                  break;
+                default:
+                  webix.message({ type: "error", text: "No sort" });
+              }
+            }
           }
         },
         {
@@ -535,6 +542,18 @@ const adminDataTable = {
   }
 };
 
+const genForm = {
+  id: "genForm",
+  rows: [
+    {
+      view: "autoGenForm",
+      borderless: true,
+      fields: ["one", "two"]
+    },
+    {}
+  ]
+};
+
 const dashboard = {
   id: "dashboard",
   cols: [{ rows: [filterOptions, dataTable] }, form]
@@ -548,7 +567,7 @@ const admin = {
 const multiView = {
   view: "multiview",
   id: "multiview",
-  cells: [dashboard, users, productsTable, admin]
+  cells: [dashboard, users, productsTable, admin, genForm]
 };
 
 const content = {
